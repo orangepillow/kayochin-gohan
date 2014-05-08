@@ -3,4 +3,9 @@
 /vendor/bundle
 /.bundle
 
-/public/vendor
+/bower_components
+/node_modules
+/lib
+
+app/public/css
+app/public/js
