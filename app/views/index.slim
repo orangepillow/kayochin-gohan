@@ -1,2 +1,11 @@
-h1 kayochin gohan
-p application
+.container
+  h1 kayochin gohan
+  .row
+    div class="col-md-8 col-xs-8"
+      form action="/takitate" method="post" role="form"
+        .input-group
+          input(type="url" id="image_url" name="image_url" class="form-control" value="" placeholder="画像のURLを入力して" pattern="https?://.+" required)
+          span.input-group-btn
+            button type="submit" class="btn btn-primary" μ'sのメンバーにしてください！
+  footer 
+    small @orangepillow
