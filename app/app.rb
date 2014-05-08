@@ -11,5 +11,9 @@ module KayochinGohan
     get '/' do
       slim :index
     end
+
+    get '/takitate' do
+
+    end
   end
 end
