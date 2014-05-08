@@ -1,0 +1,7 @@
+{
+  "name": "kayochin-gohan",
+  "version": "0.0.0",
+  "dependencies": {
+    "bootstrap": "latest"
+  }
+}

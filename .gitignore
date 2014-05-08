@@ -2,3 +2,5 @@
 
 /vendor/bundle
 /.bundle
+
+/public/vendor
