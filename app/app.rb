@@ -34,11 +34,12 @@ module KayochinGohan
         image = MiniMagick::Image.open(@url)
         image.write(generated_image_file_path)
       rescue OpenURI::HTTPError => e
-        e.message == '404 Not Found' && flash[:error] = '指定したURLの画像は存在しません'
+        e.message == '404 Not Found' && flash[:error] =
+          '指定したURLの画像は存在しません'
         redirect '/'
       rescue MiniMagick::Invalid
         flash[:error] =
-            '指定したURLは画像ではありません。画像のURLを入力してください'
+          '指定したURLは画像ではありません。画像のURLを入力してください'
         redirect '/'
       end
 
