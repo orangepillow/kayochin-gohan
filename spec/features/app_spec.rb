@@ -13,8 +13,6 @@ feature KayochinGohan::App do
     visit '/'
     fill_in 'image_url', with: 'http://app.naidente.org/notfound.jpg'
     click_button 'image_url_submit'
-    expect(page.status_code).to eq 404
-    expect(page).to have_content('error')
     expect(page).to have_content('指定したURLの画像は存在しません')
   end
 end

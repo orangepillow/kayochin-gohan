@@ -2,9 +2,13 @@ require 'bundler'
 Bundler.require
 require 'open-uri'
 require 'digest/md5'
+require 'rack-flash'
 
 module KayochinGohan
   class App < Sinatra::Base
+    enable :sessions
+    use Rack::Flash
+
     configure :development do
       Slim::Engine.set_default_options pretty: true
       register Sinatra::Reloader
@@ -28,12 +32,17 @@ module KayochinGohan
       filepath = public_root + '/' + build_dir + '/' + filename
 
       unless File.exist?(filepath)
-        image = MiniMagick::Image.open(url)
-        image.write(filepath)
+        begin
+          image = MiniMagick::Image.open(url)
+          image.write(filepath)
+        rescue OpenURI::HTTPError => e
+          e.message == '404 Not Found' && flash[:error] = '指定したURLの画像は存在しません'
+          redirect '/'
+        else
+          @path = build_dir + '/' + filename
+          slim :takitate
+        end
       end
-
-      @path = build_dir + '/' + filename
-      slim :takitate
     end
   end
 end
