@@ -38,6 +38,10 @@ module KayochinGohan
         rescue OpenURI::HTTPError => e
           e.message == '404 Not Found' && flash[:error] = '指定したURLの画像は存在しません'
           redirect '/'
+        rescue MiniMagick::Invalid
+          flash[:error] =
+            '指定したURLは画像ではありません。画像のURLを入力してください'
+          redirect '/'
         else
           @path = build_dir + '/' + filename
           slim :takitate
