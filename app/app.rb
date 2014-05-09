@@ -9,6 +9,9 @@ module KayochinGohan
     enable :sessions
     use Rack::Flash
 
+    PUBLIC_ROOT = 'app/public'
+    STORE_DIR = 'images/build'
+
     configure :development do
       Slim::Engine.set_default_options pretty: true
       register Sinatra::Reloader
@@ -23,30 +26,40 @@ module KayochinGohan
     end
 
     get '/takitate' do
-      url = params[:image_url]
+      @url = params[:image_url]
 
-      ext = File.extname(url)
-      public_root = 'app/public'
-      build_dir = 'images/build'
-      filename = Digest::SHA1.new.update(url).to_s + ext
-      filepath = public_root + '/' + build_dir + '/' + filename
+      show_generated_image if File.exist?(generated_image_file_path)
 
-      unless File.exist?(filepath)
-        begin
-          image = MiniMagick::Image.open(url)
-          image.write(filepath)
-        rescue OpenURI::HTTPError => e
-          e.message == '404 Not Found' && flash[:error] = '指定したURLの画像は存在しません'
-          redirect '/'
-        rescue MiniMagick::Invalid
-          flash[:error] =
+      begin
+        image = MiniMagick::Image.open(@url)
+        image.write(generated_image_file_path)
+      rescue OpenURI::HTTPError => e
+        e.message == '404 Not Found' && flash[:error] = '指定したURLの画像は存在しません'
+        redirect '/'
+      rescue MiniMagick::Invalid
+        flash[:error] =
             '指定したURLは画像ではありません。画像のURLを入力してください'
-          redirect '/'
-        else
-          @path = build_dir + '/' + filename
-          slim :takitate
-        end
+        redirect '/'
       end
+
+      show_generated_image
+    end
+
+    def filename
+      Digest::SHA1.new.update(@url).to_s + File.extname(@url)
+    end
+
+    def generated_image_file_path
+      PUBLIC_ROOT + '/' + STORE_DIR + '/' + filename
+    end
+
+    def generated_image_file_url_path
+      STORE_DIR + '/' + filename
+    end
+
+    def show_generated_image
+      @path = generated_image_file_url_path
+      slim :takitate
     end
   end
 end
