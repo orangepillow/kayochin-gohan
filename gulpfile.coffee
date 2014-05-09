@@ -27,6 +27,6 @@ gulp.task 'css', ->
     .pipe (gulp.dest 'app/public/css')
 
 gulp.task 'watch', ->
-  gulp.watch 'app/assets/stylesheets/*.scss', ['sass']
+  gulp.watch 'app/assets/stylesheets/*.scss', ['sass', 'css']
 
 gulp.task('default', ['bower', 'scripts', 'sass', 'css', 'watch']);
