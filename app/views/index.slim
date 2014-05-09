@@ -1,5 +1,11 @@
 .container
-  h1 kayochin gohan
+  .page-header
+    h1
+      | kayochin gohan 
+      small
+        | 画像に
+        a href="http://www.lovelive-anime.jp/member/member08.html" かよちん
+        | が登場します
   - if flash[:error]
     div class="alert alert-danger"
       = flash[:error]
@@ -10,5 +16,6 @@
           input(type="url" id="image_url" name="image_url" class="form-control" value="" placeholder="画像のURLを入力して" pattern="https?://.+" required)
           span.input-group-btn
             button type="submit" id="image_url_submit" class="btn btn-primary" μ'sのメンバーにしてください！
-  footer 
-    small @orangepillow
+  footer class="navbar-default navbar-fixed-bottom"
+    .container
+      small @orangepillow
