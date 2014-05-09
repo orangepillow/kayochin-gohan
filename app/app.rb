@@ -28,11 +28,8 @@ module KayochinGohan
       filepath = public_root + '/' + build_dir + '/' + filename
 
       unless File.exist?(filepath)
-        open(filepath, 'wb') do |file|
-          open(url) do |data|
-            file.write(data.read)
-          end
-        end
+        image = MiniMagick::Image.open(url)
+        image.write(filepath)
       end
 
       @path = build_dir + '/' + filename
