@@ -4,6 +4,8 @@ ruby '2.1.1'
 
 gem 'sinatra', '~> 1.4.5'
 gem 'sinatra-contrib', '~> 1.4.2'
+gem 'rack-flash3', '~> 1.0.5'
+gem 'sinatra-redirect-with-flash', '~> 0.2.1'
 gem 'tilt', '~>1.4.1'
 
 gem 'slim'
