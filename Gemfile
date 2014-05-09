@@ -18,6 +18,7 @@ gem 'puma'
 group :development, :test do
   gem 'rspec'
   gem 'guard-rspec'
+  gem 'foreman'
 end
 
 group :test do
