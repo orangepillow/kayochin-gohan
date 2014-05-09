@@ -29,4 +29,7 @@ gulp.task 'css', ->
 gulp.task 'watch', ->
   gulp.watch 'app/assets/stylesheets/*.scss', ['sass', 'css']
 
-gulp.task('default', ['bower', 'scripts', 'sass', 'css', 'watch']);
+gulp.task('default', ['bower', 'scripts', 'sass', 'css']);
+
+gulp.task('develop', ['bower', 'scripts', 'sass', 'css', 'watch']);
+
