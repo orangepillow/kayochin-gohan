@@ -9,3 +9,7 @@
 
 app/public/css
 app/public/js
+app/public/images/build/*.jpg
+app/public/images/build/*.jpeg
+app/public/images/build/*.png
+app/public/images/build/*.gif
