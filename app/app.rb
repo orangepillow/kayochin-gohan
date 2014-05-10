@@ -6,6 +6,7 @@ require 'rack-flash'
 
 module KayochinGohan
   PUBLIC_ROOT = 'app/public'
+  MEMBER_DIR = PUBLIC_ROOT + '/images/members'
   STORE_DIR = 'images/build'
 
   class App < Sinatra::Base
@@ -37,7 +38,19 @@ module KayochinGohan
           redirect_with_flash_error(msg)
         end
 
-        downloaded_image.write(generated_image_file_path)
+        member = params[:m]
+        member_image_path = MEMBER_DIR + '/' + member + '.png'
+        unless File.exist?(member_image_path)
+          msg = '指定した画像は存在しません'
+          redirect_with_flash_error(msg)
+        end
+        member_image = MiniMagick::Image.open(member_image_path, 'png')
+
+        generated_image = downloaded_image.composite(member_image) do |c|
+          c.geometry '+0+0'
+        end
+        generated_image.write(generated_image_file_path)
+
         show_generated_image
       rescue OpenURI::HTTPError => e
         if e.message == '404 Not Found'
