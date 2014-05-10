@@ -5,12 +5,12 @@ require 'digest/md5'
 require 'rack-flash'
 
 module KayochinGohan
+  PUBLIC_ROOT = 'app/public'
+  STORE_DIR = 'images/build'
+
   class App < Sinatra::Base
     enable :sessions
     use Rack::Flash
-
-    PUBLIC_ROOT = 'app/public'
-    STORE_DIR = 'images/build'
 
     configure :development do
       Slim::Engine.set_default_options pretty: true
@@ -31,14 +31,14 @@ module KayochinGohan
       show_generated_image if File.exist?(generated_image_file_path)
 
       begin
-        image = MiniMagick::Image.open(@url)
-        unless mime_type_white_list.include?(image.mime_type)
+        downloaded_image = MiniMagick::Image.open(@url)
+        unless mime_type_white_list.include?(downloaded_image.mime_type)
           msg = "指定できない画像形式です(指定可能: #{mime_type_white_list})"
           redirect_with_flash_error(msg)
         end
 
-        image.write(generated_image_file_path)
-
+        downloaded_image.write(generated_image_file_path)
+        show_generated_image
       rescue OpenURI::HTTPError => e
         if e.message == '404 Not Found'
           msg = '指定したURLの画像は存在しません'
@@ -48,8 +48,6 @@ module KayochinGohan
         msg = '指定したURLは画像ではありません。画像のURLを入力してください'
         redirect_with_flash_error(msg)
       end
-
-      show_generated_image
     end
 
     def filename
