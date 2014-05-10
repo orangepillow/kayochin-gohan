@@ -32,6 +32,12 @@ module KayochinGohan
 
       begin
         image = MiniMagick::Image.open(@url)
+        unless mime_type_white_list.include?(image.mime_type)
+          flash[:error] =
+            "指定できない画像形式です(指定可能: #{mime_type_white_list})"
+          redirect '/'
+        end
+
         image.write(generated_image_file_path)
       rescue OpenURI::HTTPError => e
         e.message == '404 Not Found' && flash[:error] =
@@ -61,6 +67,10 @@ module KayochinGohan
     def show_generated_image
       @path = generated_image_file_url_path
       slim :takitate
+    end
+
+    def mime_type_white_list
+      %w(image/jpeg image/png image/gif)
     end
   end
 end
