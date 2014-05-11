@@ -6,7 +6,6 @@ require 'rack-flash'
 
 module KayochinGohan
   PUBLIC_ROOT = 'app/public'
-  MEMBER_DIR = PUBLIC_ROOT + '/images/members'
   STORE_DIR = 'images/build'
 
   class App < Sinatra::Base
@@ -38,15 +37,13 @@ module KayochinGohan
           redirect_with_flash_error(msg)
         end
 
-        member = params[:m]
-        member_image_path = MEMBER_DIR + '/' + member + '.png'
-        unless File.exist?(member_image_path)
-          msg = '指定した画像は存在しません'
+        character = Character.new(params[:m])
+        unless character.exist?
+          msg = '指定したキャラクターは存在しません'
           redirect_with_flash_error(msg)
         end
-        member_image = MiniMagick::Image.open(member_image_path, 'png')
 
-        generated_image = downloaded_image.composite(member_image) do |c|
+        generated_image = downloaded_image.composite(character.image) do |c|
           c.geometry '+0+0'
         end
         generated_image.write(generated_image_file_path)
@@ -87,6 +84,28 @@ module KayochinGohan
     def redirect_with_flash_error(msg)
       flash[:error] = msg
       redirect '/'
+    end
+  end
+
+  class Character
+    MEMBER_DIR = KayochinGohan::PUBLIC_ROOT + '/' + 'images/characters'
+
+    def initialize(name)
+      @name = name
+    end
+
+    def image_path
+      MEMBER_DIR + '/' + @name + '.png'
+    end
+
+    def image
+      return nil unless self.exist?
+      return @_image = MiniMagick::Image.open(image_path, 'png') unless @_image
+      @_image
+    end
+
+    def exist?
+      File.exist?(image_path)
     end
   end
 end
