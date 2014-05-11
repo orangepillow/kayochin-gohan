@@ -9,7 +9,7 @@
 
 app/public/css
 app/public/js
-app/public/images/members
+app/public/images/characters
 app/public/images/build/*.jpg
 app/public/images/build/*.jpeg
 app/public/images/build/*.png
