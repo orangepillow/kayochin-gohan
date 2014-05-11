@@ -6,7 +6,6 @@ require 'rack-flash'
 
 module KayochinGohan
   PUBLIC_ROOT = 'app/public'
-  STORE_DIR = 'images/build'
 
   class App < Sinatra::Base
     enable :sessions
@@ -26,59 +25,31 @@ module KayochinGohan
     end
 
     get '/takitate' do
-      @url = params[:image_url]
-
-      show_generated_image if File.exist?(generated_image_file_path)
+      generated_image = Generated::Image.new(params)
+      show_takitate(generated_image.url_path) if generated_image.exist?
 
       begin
-        downloaded_image = MiniMagick::Image.open(@url)
-        unless mime_type_white_list.include?(downloaded_image.mime_type)
-          msg = "指定できない画像形式です(指定可能: #{mime_type_white_list})"
-          redirect_with_flash_error(msg)
-        end
-
-        character = Character.new(params[:m])
-        unless character.exist?
-          msg = '指定したキャラクターは存在しません'
-          redirect_with_flash_error(msg)
-        end
-
-        generated_image = downloaded_image.composite(character.image) do |c|
-          c.geometry '+0+0'
-        end
-        generated_image.write(generated_image_file_path)
-
-        show_generated_image
+        generated_image.write
       rescue OpenURI::HTTPError => e
-        if e.message == '404 Not Found'
-          msg = '指定したURLの画像は存在しません'
-          redirect_with_flash_error(msg)
-        end
+        msg = '指定したURLの画像は存在しません' if e.message == '404 Not Found'
       rescue MiniMagick::Invalid
         msg = '指定したURLは画像ではありません。画像のURLを入力してください'
-        redirect_with_flash_error(msg)
+      rescue Downloaded::Invalid
+        white_list = Downloaded::Image::WHITE_LIST
+        msg = "指定できない画像形式です(指定可能: #{white_list})"
+#        msg = '指定できない画像形式です'
+      rescue Character::Invalid
+        msg = '指定したキャラクターは存在しません'
       end
+
+      redirect_with_flash_error(msg) if msg
+
+      show_takitate(generated_image.url_path)
     end
 
-    def filename
-      Digest::SHA1.new.update(@url).to_s + File.extname(@url)
-    end
-
-    def generated_image_file_path
-      PUBLIC_ROOT + '/' + STORE_DIR + '/' + filename
-    end
-
-    def generated_image_file_url_path
-      STORE_DIR + '/' + filename
-    end
-
-    def show_generated_image
-      @path = generated_image_file_url_path
+    def show_takitate(url_path)
+      @path = url_path
       slim :takitate
-    end
-
-    def mime_type_white_list
-      %w(image/jpeg image/png image/gif)
     end
 
     def redirect_with_flash_error(msg)
@@ -86,22 +57,77 @@ module KayochinGohan
       redirect '/'
     end
   end
+end
 
-  class Character
-    MEMBER_DIR = KayochinGohan::PUBLIC_ROOT + '/' + 'images/characters'
+module Generated
+  STORE_DIR = 'images/build'
+
+  class Image
+    def initialize(params)
+      @url = params[:image_url]
+      @character = params[:m]
+    end
+
+    def filename
+      Digest::SHA1.new.update(@url).to_s + File.extname(@url)
+    end
+
+    def filepath
+      KayochinGohan::PUBLIC_ROOT + '/' + STORE_DIR + '/' + filename
+    end
+
+    def url_path
+      STORE_DIR + '/' + filename
+    end
+
+    def exist?
+      File.exist?(filepath)
+    end
+
+    def write
+      downloaded = Downloaded::Image.new(@url)
+      character = Character::Image.new(@character)
+
+      image = downloaded.image.composite(character.image) do |c|
+        c.geometry '+0+0'
+      end
+
+      image.write(filepath)
+    end
+  end
+end
+
+module Downloaded
+  class Invalid < StandardError; end
+
+  class Image
+    WHITE_LIST = %w(image/jpeg image/png image/gif)
+
+    def initialize(url)
+      @image = MiniMagick::Image.open(url)
+      fail Downloaded::Invalid unless self.valid?
+    end
+
+    def valid?
+      WHITE_LIST.include?(@image.mime_type)
+    end
+  end
+end
+
+module Character
+  class Invalid < StandardError; end
+
+  class Image
+    STORE_DIR = KayochinGohan::PUBLIC_ROOT + '/' + 'images/characters'
 
     def initialize(name)
       @name = name
+      fail Character::Invalid unless self.exist?
+      @image = MiniMagick::Image.open(image_path, 'png')
     end
 
     def image_path
-      MEMBER_DIR + '/' + @name.to_s + '.png'
-    end
-
-    def image
-      return nil unless self.exist?
-      return @_image = MiniMagick::Image.open(image_path, 'png') unless @_image
-      @_image
+      STORE_DIR + '/' + @name.to_s + '.png'
     end
 
     def exist?
