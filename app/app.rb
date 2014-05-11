@@ -37,7 +37,6 @@ module KayochinGohan
       rescue Downloaded::Invalid
         white_list = Downloaded::Image::WHITE_LIST
         msg = "指定できない画像形式です(指定可能: #{white_list})"
-#        msg = '指定できない画像形式です'
       rescue Character::Invalid
         msg = '指定したキャラクターは存在しません'
       end
