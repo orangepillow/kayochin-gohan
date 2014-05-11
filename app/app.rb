@@ -25,7 +25,7 @@ module KayochinGohan
 
     get '/takitate' do
       generated_image = Generated::Image.new(params)
-      show_takitate(generated_image.url_path) if generated_image.exist?
+      generated_image.exist? && show_takitate(generated_image.url_path)
 
       begin
         generated_image.write
