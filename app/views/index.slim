@@ -6,9 +6,7 @@
         | 画像に
         a href="http://www.lovelive-anime.jp/member/member08.html" かよちん
         | が登場します
-  - if flash[:error]
-    div class="alert alert-danger"
-      = flash[:error]
+    == slim :_error_messages
   .row
     div class="col-md-8 col-xs-8"
       form action="/takitate" method="get" role="form"
