@@ -95,7 +95,7 @@ module KayochinGohan
     end
 
     def image_path
-      MEMBER_DIR + '/' + @name + '.png'
+      MEMBER_DIR + '/' + @name.to_s + '.png'
     end
 
     def image
