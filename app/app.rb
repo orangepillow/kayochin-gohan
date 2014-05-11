@@ -101,6 +101,7 @@ module Downloaded
 
   class Image
     WHITE_LIST = %w(image/jpeg image/png image/gif)
+    attr_reader :image
 
     def initialize(url)
       @image = MiniMagick::Image.open(url)
@@ -118,6 +119,7 @@ module Character
 
   class Image
     STORE_DIR = KayochinGohan::PUBLIC_ROOT + '/' + 'images/characters'
+    attr_reader :image
 
     def initialize(name)
       @name = name
