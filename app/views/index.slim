@@ -9,10 +9,13 @@
     == slim :_error_messages
   .row
     div class="col-md-8 col-xs-8"
-      form action="/takitate" method="get" role="form"
-        .input-group
-          input(type="url" id="image_url" name="image_url" class="form-control" value="" placeholder="画像のURLを入力して" pattern="https?://.+" required)
-          select name="m"
+      form action="/takitate" method="get" class="form-horizontal" role="form"
+        .form-group
+          .input-group
+            input(type="url" id="image_url" name="image_url" class="form-control" value="" placeholder="画像のURLを入力して" pattern="https?://.+" required)
+            span.input-group-btn
+              button type="submit" id="image_url_submit" class="btn btn-primary" μ'sのメンバーにしてください！
+        .form-group
+          label for="character" class="control-label" キャラ
+          select id="character" class="form-control" name="m"
             option value="tojo" 東條希
-          span.input-group-btn
-            button type="submit" id="image_url_submit" class="btn btn-primary" μ'sのメンバーにしてください！
