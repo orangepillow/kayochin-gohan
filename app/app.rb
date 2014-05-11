@@ -65,10 +65,12 @@ module Generated
       @url = params[:image_url]
       @character = params[:m]
       @reverse = params[:reverse]
+
+      @filename_seed = params.values.join
     end
 
     def filename
-      Digest::SHA1.new.update(@url).to_s + File.extname(@url)
+      Digest::SHA1.new.update(@filename_seed).to_s + File.extname(@url)
     end
 
     def filepath
