@@ -65,6 +65,7 @@ module Generated
     def initialize(params)
       @url = params[:image_url]
       @character = params[:m]
+      @reverse = params[:reverse]
     end
 
     def filename
@@ -86,6 +87,8 @@ module Generated
     def write
       downloaded = Downloaded::Image.new(@url)
       character = Character::Image.new(@character)
+
+      character.image.flop if @reverse
 
       image = downloaded.image.composite(character.image) do |c|
         c.geometry '+0+0'
