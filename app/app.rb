@@ -148,6 +148,8 @@ class ImageFilter
     case type
     when 'mono'
       image = grayscale(image)
+    when 'sepia'
+      image = sepiatone(image)
     else
       image
     end
@@ -155,6 +157,11 @@ class ImageFilter
 
   def self.grayscale(image)
     image.colorspace('Gray')
+    image
+  end
+
+  def self.sepiatone(image)
+    image.sepia_tone '80%'
     image
   end
 end
