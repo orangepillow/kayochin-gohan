@@ -152,6 +152,8 @@ class ImageFilter
       image = sepiatone(image)
     when 'toaster'
       image = toaster(image)
+    when 'gotham'
+      image = gotham(image)
     else
       image
     end
@@ -173,6 +175,15 @@ class ImageFilter
     image.contrast
     image.contrast
     image.contrast
+    image.contrast
+    image
+  end
+
+  def self.gotham(image)
+    image.modulate '120,10,100'
+    image.fill '#222b6d'
+    image.colorize 20
+    image.gamma 0.5
     image.contrast
     image
   end
