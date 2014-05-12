@@ -170,10 +170,18 @@ class ImageFilter
   end
 
   def self.toaster(image)
+    new_image = image.clone
+    new_image.combine_options do |cmd|
+      cmd.fill '#330000'
+      cmd.colorize '63%'
+    end
+    image = image.composite new_image do |cmd|
+      cmd.compose 'blend'
+      cmd.define 'compose:args=100,0'
+    end
+
     image.modulate '150,80,100'
-    image.gamma 1.1
-    image.contrast
-    image.contrast
+    image.gamma 1.2
     image.contrast
     image.contrast
     image
