@@ -65,6 +65,7 @@ module Generated
       @url = params[:image_url]
       @character = params[:m]
       @reverse = params[:reverse]
+      @filter = params[:filter]
 
       @filename_seed = params.values.join
     end
@@ -95,6 +96,7 @@ module Generated
         c.geometry '+0+0'
       end
 
+      image = ImageFilter.apply(image, @filter)
       image.write(filepath)
     end
   end
@@ -138,5 +140,21 @@ module Character
     def exist?
       File.exist?(image_path)
     end
+  end
+end
+
+class ImageFilter
+  def self.apply(image, type)
+    case type
+    when 'mono'
+      image = grayscale(image)
+    else
+      image
+    end
+  end
+
+  def self.grayscale(image)
+    image.colorspace('Gray')
+    image
   end
 end
