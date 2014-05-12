@@ -150,6 +150,8 @@ class ImageFilter
       image = grayscale(image)
     when 'sepia'
       image = sepiatone(image)
+    when 'toaster'
+      image = toaster(image)
     else
       image
     end
@@ -162,6 +164,16 @@ class ImageFilter
 
   def self.sepiatone(image)
     image.sepia_tone '80%'
+    image
+  end
+
+  def self.toaster(image)
+    image.modulate '150,80,100'
+    image.gamma 1.1
+    image.contrast
+    image.contrast
+    image.contrast
+    image.contrast
     image
   end
 end
