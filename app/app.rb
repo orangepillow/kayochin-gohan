@@ -146,7 +146,7 @@ module Character
 end
 
 class ImageFilter
-  FILTERS = %w(none grayscale sepia toaster gotham lomo)
+  FILTERS = %w(none grayscale sepia toaster gotham lomo kelvin)
 
   def self.apply(image, name)
     if self.exist?(name)
@@ -156,11 +156,11 @@ class ImageFilter
     end
   end
 
-  def exist?(name)
+  def self.exist?(name)
     self.methods.map{ |m| m.to_s }.include?(filter_method(name))
   end
 
-  def filter_method(name)
+  def self.filter_method(name)
     "#{name}_filter"
   end
 
@@ -206,6 +206,26 @@ class ImageFilter
     image.level '22%'
     image.channel 'G'
     image.level '22%'
+    image
+  end
+
+  def self.kelvin_filter(image)
+    cols, rows = image[:dimensions]
+
+    image.auto_gamma
+    image.modulate '120,50,100'
+
+    new_image = image.clone
+    new_image.combine_options do |c|
+      c.fill 'rgba(255, 153, 0, 0.5)'
+      c.draw "rectangle 0,0 #{cols},#{rows}"
+    end
+
+    image = image.composite new_image do |c|
+      c.compose 'multiply'
+    end
+
+    image.gamma 1.2
     image
   end
 end
