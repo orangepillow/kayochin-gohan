@@ -154,6 +154,8 @@ class ImageFilter
       image = toaster(image)
     when 'gotham'
       image = gotham(image)
+    when 'lomo'
+      image = lomo(image)
     else
       image
     end
@@ -193,6 +195,14 @@ class ImageFilter
     image.colorize 20
     image.gamma 0.5
     image.contrast
+    image
+  end
+
+  def self.lomo(image)
+    image.channel 'R'
+    image.level '22%'
+    image.channel 'G'
+    image.level '22%'
     image
   end
 end
