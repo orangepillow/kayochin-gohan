@@ -169,7 +169,7 @@ class ImageFilter
     image
   end
 
-  def self.sepiatone_filter(image)
+  def self.sepia_filter(image)
     image.sepia_tone '80%'
     image
   end
