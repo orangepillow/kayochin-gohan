@@ -146,36 +146,35 @@ module Character
 end
 
 class ImageFilter
-  FILTERS = %w(none mono sepia toaster gotham lomo)
+  FILTERS = %w(none grayscale sepia toaster gotham lomo)
 
-  def self.apply(image, type)
-    case type
-    when 'mono'
-      image = grayscale(image)
-    when 'sepia'
-      image = sepiatone(image)
-    when 'toaster'
-      image = toaster(image)
-    when 'gotham'
-      image = gotham(image)
-    when 'lomo'
-      image = lomo(image)
+  def self.apply(image, name)
+    if self.exist?(name)
+      image = send(filter_method(name), image)
     else
       image
     end
   end
 
-  def self.grayscale(image)
+  def exist?(name)
+    self.methods.map{ |m| m.to_s }.include?(filter_method(name))
+  end
+
+  def filter_method(name)
+    "#{name}_filter"
+  end
+
+  def self.grayscale_filter(image)
     image.colorspace('Gray')
     image
   end
 
-  def self.sepiatone(image)
+  def self.sepiatone_filter(image)
     image.sepia_tone '80%'
     image
   end
 
-  def self.toaster(image)
+  def self.toaster_filter(image)
     new_image = image.clone
     new_image.combine_options do |cmd|
       cmd.fill '#330000'
@@ -193,7 +192,7 @@ class ImageFilter
     image
   end
 
-  def self.gotham(image)
+  def self.gotham_filter(image)
     image.modulate '120,10,100'
     image.fill '#222b6d'
     image.colorize 20
@@ -202,7 +201,7 @@ class ImageFilter
     image
   end
 
-  def self.lomo(image)
+  def self.lomo_filter(image)
     image.channel 'R'
     image.level '22%'
     image.channel 'G'
