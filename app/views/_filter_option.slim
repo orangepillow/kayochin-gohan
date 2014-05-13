@@ -1,0 +1,3 @@
+select class="form-control" name="filter" 
+  - @filters.each do |f|
+    option name="filter" id="filter-#{f}" value="#{f}" #{f}

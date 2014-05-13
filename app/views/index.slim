@@ -22,24 +22,8 @@
               input type="checkbox" id="reverse" name="reverse" value="on"  逆
         .form-group
           label class="control-label col-sm-2" フィルタ
-          label class="radio-inline"
-            input(type="radio" name="filter" id="filter-none" value="" checked)
-            | なし
-          label class="radio-inline"
-            input(type="radio" name="filter" id="filter-mono" value="mono")
-            | グレースケール 
-          label class="radio-inline"
-            input(type="radio" name="filter" id="filter-sepia" value="sepia")
-            | セピア
-          label class="radio-inline"
-            input(type="radio" name="filter" id="filter-toaster" value="toaster")
-            | toaster
-          label class="radio-inline"
-            input(type="radio" name="filter" id="filter-gotham" value="gotham")
-            | gotham 
-          label class="radio-inline"
-            input(type="radio" name="filter" id="filter-lomo" value="lomo")
-            | lomo 
+          div class="select col-sm-10"
+            == slim :_filter_option
         .form-group
           label for="character" class="control-label" キャラ
           select id="character" class="form-control" name="m"

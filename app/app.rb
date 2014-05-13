@@ -20,6 +20,7 @@ module KayochinGohan
     end
 
     get '/' do
+      @filters = ImageFilter::FILTERS
       slim :index
     end
 
@@ -52,6 +53,7 @@ module KayochinGohan
 
     def redirect_with_flash_error(msg)
       flash[:error] = msg
+      @filters = ImageFilter::FILTERS
       redirect '/'
     end
   end
@@ -144,6 +146,8 @@ module Character
 end
 
 class ImageFilter
+  FILTERS = %w(none mono sepia toaster gotham lomo)
+
   def self.apply(image, type)
     case type
     when 'mono'
