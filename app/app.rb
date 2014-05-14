@@ -68,9 +68,9 @@ module Generated
       @url = params[:image_url]
       @character = params[:m]
       @flip = params[:reverse]
-      @filter = filter(params[:filter])
-      @gravity = gravity(params[:g])
-      @scale = scale(params[:scale])
+      @filter = validate_filter(params[:filter])
+      @gravity = validate_gravity(params[:g])
+      @scale = validate_scale(params[:scale])
       @percentage = validate_percentage(params[:p])
 
       @filename_seed = [
@@ -94,11 +94,11 @@ module Generated
       File.exist?(filepath)
     end
 
-    def filter(f)
+    def validate_filter(f)
       ImageFilter::FILTERS.include?(f) ? f : 'none'
     end
 
-    def gravity(g)
+    def validate_gravity(g)
       GRAVITIES.include?(g) ? g : 'south'
     end
 
@@ -108,7 +108,7 @@ module Generated
       (p >= 1 && p <= 100) ? p : 40
     end
 
-    def scale(s)
+    def validate_scale(s)
       resize?(s) ? s : 'natural'
     end
 
@@ -132,17 +132,20 @@ module Generated
       image.flip if @gravity.include?('north')
     end
 
+    def resize(base, chara, scale, percentage)
+      if resize?(scale)
+        cols, rows = resized_dimensions(
+          base, chara, scale, percentage)
+        chara.image.resize "#{cols}x#{rows}"
+      end
+    end
+
     def write
       downloaded = Downloaded::Image.new(@url)
       character = Character::Image.new(@character)
 
       reverse(character.image)
-
-      if resize?(@scale)
-        cols, rows = resized_dimensions(
-          downloaded, character, @scale, @percentage)
-        character.image.resize "#{cols}x#{rows}"
-      end
+      resize(downloaded, character, @scale, @percentage)
 
       image = downloaded.image.composite(character.image) do |c|
         c.gravity @gravity
