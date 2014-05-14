@@ -74,14 +74,14 @@ module Generated
       @gravity = validate_gravity(params[:g])
       @scale = validate_scale(params[:scale])
       @percentage = validate_percentage(params[:p])
+    end
 
-      @filename_seed = [
-        @url, @character, @flip, @filter, @gravity, @scale, @percentage
-      ].join
+    def filename_seed
+      instance_variables.map { |sym| instance_variable_get(sym) }.join
     end
 
     def filename
-      Digest::SHA1.new.update(@filename_seed).to_s + File.extname(@url)
+      Digest::SHA1.new.update(filename_seed).to_s + File.extname(@url)
     end
 
     def filepath
