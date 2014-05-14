@@ -61,6 +61,7 @@ end
 
 module Generated
   STORE_DIR = 'images/build'
+  GRAVITIES = %w(north northwest northeast south southwest southeast)
 
   class Image
     def initialize(params)
@@ -68,6 +69,7 @@ module Generated
       @character = params[:m]
       @reverse = params[:reverse]
       @filter = params[:filter]
+      @gravity = gravity(params[:g])
 
       @filename_seed = params.values.join
     end
@@ -88,14 +90,19 @@ module Generated
       File.exist?(filepath)
     end
 
+    def gravity(g)
+      GRAVITIES.include?(g) ? g : 'south'
+    end
+
     def write
       downloaded = Downloaded::Image.new(@url)
       character = Character::Image.new(@character)
 
       character.image.flop if @reverse
+      character.image.flip if @gravity.include?('north')
 
       image = downloaded.image.composite(character.image) do |c|
-        c.geometry '+0+0'
+        c.gravity @gravity
       end
 
       image = ImageFilter.apply(image, @filter)

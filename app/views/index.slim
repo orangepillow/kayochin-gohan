@@ -16,6 +16,23 @@
             span.input-group-btn
               button type="submit" id="image_url_submit" class="btn btn-primary" μ'sのメンバーにしてください！
         .form-group
+          label class="control-label col-sm-2" 位置
+          .input-group
+            label for="g-northwest" class="radio-inline"
+              input type="radio" id="g-northwest" name="g" value="northwest" 左上 
+            label for="g-north" class="radio-inline"
+              input type="radio" id="g-north" name="g" value="north" 中上 
+            label for="g-northeast" class="radio-inline"
+              input type="radio" id="g-northeast" name="g" value="northeast" 右上 
+          label class="control-label col-sm-2" 
+          .input-group
+            label for="g-southwest" class="radio-inline"
+              input type="radio" id="g-southwest" name="g" value="southwest" 左下
+            label for="g-south" class="radio-inline"
+              input(type="radio" id="g-south" name="g" value="south" checked) 中下
+            label for="g-southeast" class="radio-inline"
+              input type="radio" id="g-southeast" name="g" value="southeast" 右下
+        .form-group
           label class="control-label col-sm-2" 向き
           div class="checkbox col-sm-10"
             label for="reverse"
