@@ -68,7 +68,7 @@ module Generated
       @url = params[:image_url]
       @character = params[:m]
       @reverse = params[:reverse]
-      @filter = params[:filter]
+      @filter = filter(params[:filter])
       @gravity = gravity(params[:g])
 
       @filename_seed = params.values.join
@@ -88,6 +88,10 @@ module Generated
 
     def exist?
       File.exist?(filepath)
+    end
+
+    def filter(f)
+      ImageFilter::FILTERS.include?(f) ? f : 'none'
     end
 
     def gravity(g)
