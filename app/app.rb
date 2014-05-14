@@ -55,7 +55,6 @@ module KayochinGohan
 
     def redirect_with_flash_error(msg)
       flash[:error] = msg
-      @filters = ImageFilter::FILTERS
       redirect '/'
     end
   end
