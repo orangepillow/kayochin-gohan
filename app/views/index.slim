@@ -16,6 +16,15 @@
             span.input-group-btn
               button type="submit" id="image_url_submit" class="btn btn-primary" μ'sのメンバーにしてください！
         .form-group
+          label class="control-label col-sm-2" キャラ幅
+          .input-group
+            label for="s-resize" class="radio-inline" 
+              input(type="radio" id="s-resize" name="scale" value="resize" checked)画像横幅の割合
+              input type="number" name="p" value="40" min="1" max="100" placeholder="1-100"
+              | %
+            label for="s-maximize" class="radio" style="font-weight:normal" 
+              input type="radio" id="s-maximize" name="scale" value="maximize" 画像に合わせて最大化
+        .form-group
           label class="control-label col-sm-2" 位置
           .input-group
             label for="g-northwest" class="radio-inline"

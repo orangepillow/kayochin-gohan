@@ -67,11 +67,15 @@ module Generated
     def initialize(params)
       @url = params[:image_url]
       @character = params[:m]
-      @reverse = params[:reverse]
+      @flip = params[:reverse]
       @filter = filter(params[:filter])
       @gravity = gravity(params[:g])
+      @scale = scale(params[:scale])
+      @percentage = validate_percentage(params[:p])
 
-      @filename_seed = params.values.join
+      @filename_seed = [
+        @url, @character, @flip, @filter, @gravity, @scale, @percentage
+      ].join
     end
 
     def filename
@@ -98,12 +102,47 @@ module Generated
       GRAVITIES.include?(g) ? g : 'south'
     end
 
+    def validate_percentage(p)
+      return 40 if p.nil?
+      p = p.to_i
+      (p >= 1 && p <= 100) ? p : 40
+    end
+
+    def scale(s)
+      resize?(s) ? s : 'natural'
+    end
+
+    def resize?(scale)
+      %w(resize maximize).include?(scale)
+    end
+
+    def resized_dimensions(base, chara, scale, percentage)
+      case scale
+      when 'maximize'
+        base.image[:dimensions]
+      when 'resize'
+        base.image[:dimensions].map { |s| (s * percentage / 100).ceil }
+      else
+        chara.image[:dimensions]
+      end
+    end
+
+    def reverse(image)
+      image.flop if @flip
+      image.flip if @gravity.include?('north')
+    end
+
     def write
       downloaded = Downloaded::Image.new(@url)
       character = Character::Image.new(@character)
 
-      character.image.flop if @reverse
-      character.image.flip if @gravity.include?('north')
+      reverse(character.image)
+
+      if resize?(@scale)
+        cols, rows = resized_dimensions(
+          downloaded, character, @scale, @percentage)
+        character.image.resize "#{cols}x#{rows}"
+      end
 
       image = downloaded.image.composite(character.image) do |c|
         c.gravity @gravity
