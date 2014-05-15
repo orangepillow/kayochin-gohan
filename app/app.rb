@@ -148,6 +148,8 @@ module Generated
       image = downloaded_image.composite(character.image) do |c|
         c.gravity @gravity
       end
+      image.format('jpg')
+      image.quality(70)
 
       image = ImageFilter.apply(image, @filter)
       image.write(filepath)
