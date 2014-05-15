@@ -2,6 +2,7 @@
   "name": "kayochin-gohan",
   "version": "0.0.0",
   "dependencies": {
-    "bootstrap": "latest"
+    "bootstrap": "latest",
+    "image-picker": "https://github.com/rvera/image-picker.git"
   }
 }

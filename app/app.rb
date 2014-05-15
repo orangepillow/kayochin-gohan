@@ -24,6 +24,7 @@ module KayochinGohan
     end
 
     get '/' do
+      @character_names = character_names
       @filters = ImageFilter::FILTERS
       slim :index
     end
@@ -46,6 +47,11 @@ module KayochinGohan
 
       redirect_with_flash_error(msg) if msg
       show_takitate(generated_image.url_path)
+    end
+
+    def character_names
+      pattern = Character::Image::STORE_DIR + '/' + '*.png'
+      Dir.glob(pattern).map { |f| File.basename f, '.png' }
     end
 
     def show_takitate(url_path)

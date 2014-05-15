@@ -52,5 +52,7 @@
             == slim :_filter_option
         .form-group
           label for="character" class="control-label" キャラ
-          select id="character" class="form-control" name="m"
-            option value="tojo" 東條希
+          select id="character" class="image-picker show-html" class="form-control" name="m"
+            == slim :_character_select
+        script
+          | $(function() {$("select#character").imagepicker(); });

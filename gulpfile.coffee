@@ -14,8 +14,17 @@ gulp.task 'bower', ->
     .pipe flatten()
     .pipe (gulp.dest 'lib')
 
+gulp.task 'image-picker-css', ->
+  gulp.src('bower_components/image-picker/image-picker/image-picker.css')
+    .pipe (gulp.dest 'lib')
+
+gulp.task 'image-picker-js', ->
+  gulp.src('bower_components/image-picker/image-picker/image-picker.min.js')
+    .pipe (gulp.dest 'lib')
+
 gulp.task 'scripts', ->
-  gulp.src('lib/*.js')
+  gulp.src(['lib/jquery.js', 'lib/*.js'])
+    .pipe concat('all.js')
     .pipe (gulp.dest 'app/public/js')
 
 gulp.task 'sass', ->
@@ -38,7 +47,7 @@ gulp.task 'watch', ->
     gulp.watch 'app/views/*.slim'
     gulp.watch 'app/assets/stylesheets/*.scss', ['sass', 'css']
 
-gulp.task('default', ['bower', 'scripts', 'sass', 'css']);
+gulp.task('default', ['bower', 'image-picker-css', 'image-picker-js', 'scripts', 'sass', 'css']);
 
-gulp.task('develop', ['bower', 'scripts', 'sass', 'css', 'watch']);
+gulp.task('develop', ['bower', 'image-picker-css', 'image-picker-js', 'scripts', 'sass', 'css', 'watch']);
 
