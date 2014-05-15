@@ -29,10 +29,9 @@ module KayochinGohan
 
     get '/takitate' do
       generated_image = Generated::Image.new(params)
-      generated_image.exist? && show_takitate(generated_image.url_path)
 
       begin
-        generated_image.write
+        generated_image.write unless generated_image.exist?
       rescue OpenURI::HTTPError => e
         msg = '指定したURLの画像は存在しません' if e.message == '404 Not Found'
       rescue MiniMagick::Invalid
@@ -45,7 +44,6 @@ module KayochinGohan
       end
 
       redirect_with_flash_error(msg) if msg
-
       show_takitate(generated_image.url_path)
     end
 
