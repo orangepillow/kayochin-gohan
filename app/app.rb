@@ -4,6 +4,7 @@ require 'digest/md5'
 require 'rack-flash'
 
 require File.join(File.dirname(__FILE__), 'image_filter.rb')
+require File.join(File.dirname(__FILE__), 'image_downloader.rb')
 
 module KayochinGohan
   PUBLIC_ROOT = 'app/public'
@@ -36,8 +37,8 @@ module KayochinGohan
         msg = '指定したURLの画像は存在しません' if e.message == '404 Not Found'
       rescue MiniMagick::Invalid
         msg = '指定したURLは画像ではありません。画像のURLを入力してください'
-      rescue Downloaded::Invalid
-        white_list = Downloaded::Image::WHITE_LIST
+      rescue ImageDownloader::Invalid
+        white_list = ImageDownloader::MIME_TYPE_WHITE_LIST
         msg = "指定できない画像形式です(指定可能: #{white_list})"
       rescue Character::Invalid
         msg = '指定したキャラクターは存在しません'
@@ -117,14 +118,14 @@ module Generated
       %w(resize maximize).include?(scale)
     end
 
-    def resized_dimensions(base, chara, scale, percentage)
+    def resized_dimensions(base_img, chara_img, scale, percentage)
       case scale
       when 'maximize'
-        base.image[:dimensions]
+        base_img[:dimensions]
       when 'resize'
-        base.image[:dimensions].map { |s| (s * percentage / 100).ceil }
+        base_img[:dimensions].map { |s| (s * percentage / 100).ceil }
       else
-        chara.image[:dimensions]
+        chara_img[:dimensions]
       end
     end
 
@@ -133,45 +134,27 @@ module Generated
       image.flip if @gravity.include?('north')
     end
 
-    def resize(base, chara, scale, percentage)
+    def resize(base_img, chara_img, scale, percentage)
       if resize?(scale)
         cols, rows = resized_dimensions(
-          base, chara, scale, percentage)
-        chara.image.resize "#{cols}x#{rows}"
+          base_img, chara_img, scale, percentage)
+        chara_img.resize "#{cols}x#{rows}"
       end
     end
 
     def write
-      downloaded = Downloaded::Image.new(@url)
+      downloaded_image = ImageDownloader.new(@url).download
       character = Character::Image.new(@character)
 
       reverse(character.image)
-      resize(downloaded, character, @scale, @percentage)
+      resize(downloaded_image, character.image, @scale, @percentage)
 
-      image = downloaded.image.composite(character.image) do |c|
+      image = downloaded_image.composite(character.image) do |c|
         c.gravity @gravity
       end
 
       image = ImageFilter.apply(image, @filter)
       image.write(filepath)
-    end
-  end
-end
-
-module Downloaded
-  class Invalid < StandardError; end
-
-  class Image
-    WHITE_LIST = %w(image/jpeg image/png image/gif)
-    attr_reader :image
-
-    def initialize(url)
-      @image = MiniMagick::Image.open(url)
-      fail Downloaded::Invalid unless self.valid?
-    end
-
-    def valid?
-      WHITE_LIST.include?(@image.mime_type)
     end
   end
 end
