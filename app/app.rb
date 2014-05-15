@@ -1,5 +1,6 @@
 require 'bundler'
 Bundler.require
+require 'sinatra/reloader'
 require 'digest/md5'
 require 'rack-flash'
 
@@ -149,7 +150,7 @@ module Generated
         c.gravity @gravity
       end
       image.format('jpg')
-      image.quality(70)
+      image.quality(80)
 
       image = ImageFilter.apply(image, @filter)
       image.write(filepath)
