@@ -61,6 +61,7 @@ end
 
 module Generated
   STORE_DIR = 'images/build'
+  RESIZE_TYPE = %w(resize maximize)
   GRAVITIES = %w(north northwest northeast south southwest southeast)
 
   class Image
@@ -109,19 +110,19 @@ module Generated
     end
 
     def validate_scale(s)
-      resize?(s) ? s : 'natural'
+      RESIZE_TYPE.include?(s) ? s : 'natural'
     end
 
-    def resize?(scale)
-      %w(resize maximize).include?(scale)
+    def resize?
+      RESIZE_TYPE.include?(@scale)
     end
 
-    def resized_dimensions(base_img, chara_img, scale, percentage)
-      case scale
+    def resized_dimensions(base_img, chara_img)
+      case @scale
       when 'maximize'
         base_img[:dimensions]
       when 'resize'
-        base_img[:dimensions].map { |s| (s * percentage / 100).ceil }
+        base_img[:dimensions].map { |s| (s * @percentage / 100).ceil }
       else
         chara_img[:dimensions]
       end
@@ -132,12 +133,9 @@ module Generated
       image.flip if @gravity.include?('north')
     end
 
-    def resize(base_img, chara_img, scale, percentage)
-      if resize?(scale)
-        cols, rows = resized_dimensions(
-          base_img, chara_img, scale, percentage)
-        chara_img.resize "#{cols}x#{rows}"
-      end
+    def resize(base_img, chara_img)
+      cols, rows = resized_dimensions(base_img, chara_img)
+      chara_img.resize "#{cols}x#{rows}"
     end
 
     def write
@@ -145,7 +143,7 @@ module Generated
       character = Character::Image.new(@character)
 
       reverse(character.image)
-      resize(downloaded_image, character.image, @scale, @percentage)
+      resize(downloaded_image, character.image) if resize?
 
       image = downloaded_image.composite(character.image) do |c|
         c.gravity @gravity
