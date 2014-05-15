@@ -1,7 +1,7 @@
 require 'mini_magick'
 
 class ImageFilter
-  FILTERS = %w(none grayscale sepia toaster gotham lomo kelvin)
+  FILTERS = %w(none grayscale sepia toaster gotham lomo kelvin blur)
 
   def self.apply(image, name)
     if self.exist?(name)
@@ -81,6 +81,23 @@ class ImageFilter
     end
 
     image.gamma 1.2
+    image
+  end
+
+  def self.blur_filter(image)
+    cols, rows = image[:dimensions]
+
+    new_image = image.clone
+    new_image.combine_options do |c|
+      c.fill 'rgba(255, 255, 255, 0.5)'
+      c.draw "rectangle 0,0 #{cols},#{rows}"
+    end
+
+    image = image.composite new_image do |c|
+      c.compose 'multiply'
+    end
+
+    image.blur '0x8'
     image
   end
 end
