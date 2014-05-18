@@ -1,7 +1,9 @@
 require 'mini_magick'
+require 'uri'
 
 class ImageDownloader
   class Invalid < StandardError; end
+  class InvalidURLScheme < StandardError; end
 
   attr_reader :url, :image
 
@@ -9,6 +11,9 @@ class ImageDownloader
 
   def initialize(url)
     @url = url
+
+    uri = URI.parse(@url)
+    fail ImageDownloader::InvalidURLScheme if uri.scheme !~ /https?/
   end
 
   def download

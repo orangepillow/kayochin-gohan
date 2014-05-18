@@ -1,5 +1,6 @@
 require 'bundler'
 Bundler.require
+require 'open-uri'
 require 'sinatra/reloader'
 require 'digest/md5'
 require 'rack-flash'
@@ -38,6 +39,8 @@ module KayochinGohan
         msg = '指定したURLの画像は存在しません' if e.message == '404 Not Found'
       rescue MiniMagick::Invalid
         msg = '指定したURLは画像ではありません。画像のURLを入力してください'
+      rescue ImageDownloader::InvalidURLScheme
+        msg = 'httpもしくはhttpsで始まるURLを入力してください'
       rescue ImageDownloader::Invalid
         white_list = ImageDownloader::MIME_TYPE_WHITE_LIST
         msg = "指定できない画像形式です(指定可能: #{white_list})"
