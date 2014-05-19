@@ -175,13 +175,13 @@ module Character
     attr_reader :image
 
     def initialize(name)
-      @name = name
+      @name = name.to_s
       fail Character::Invalid unless self.exist?
       @image = MiniMagick::Image.open(image_path, 'png')
     end
 
     def image_path
-      STORE_DIR + '/' + @name.to_s + '.png'
+      STORE_DIR + '/' + @name + '.png'
     end
 
     def exist?
