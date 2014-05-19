@@ -13,7 +13,7 @@ class ImageDownloader
     @url = url
 
     uri = URI.parse(@url)
-    fail ImageDownloader::InvalidURLScheme if uri.scheme !~ /https?/
+    fail ImageDownloader::InvalidURLScheme if uri.scheme !~ /^https?/
   end
 
   def download
