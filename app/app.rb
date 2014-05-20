@@ -42,7 +42,9 @@ module KayochinGohan
       rescue ImageDownloader::InvalidURLScheme
         msg = 'httpもしくはhttpsで始まるURLを入力してください'
       rescue ImageDownloader::Invalid
-        white_list = ImageDownloader::MIME_TYPE_WHITE_LIST
+        white_list = ImageDownloader::MIME_TYPE_WHITE_LIST.map do |m|
+          m.gsub(Regexp.new('image/'), '')
+        end.join(', ')
         msg = "指定できない画像形式です(指定可能: #{white_list})"
       rescue Character::Invalid
         msg = '指定したキャラクターは存在しません'
