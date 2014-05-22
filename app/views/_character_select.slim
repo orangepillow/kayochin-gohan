@@ -1,2 +1,3 @@
 - @character_names.each do |name|
-  option data-img-src="./images/characters/thumbnail-#{name}.jpg" value="#{name}" #{name}
+    option data-img-src="#{Character::Image.thumbnail_path(name)}" value="#{name}" #{name}
+

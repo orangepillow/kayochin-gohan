@@ -186,6 +186,14 @@ module Character
       STORE_DIR + '/' + @name + '.png'
     end
 
+    def self.thumbnail_path(name)
+      filename = "thumbnail-#{name}.jpg"
+      filepath = STORE_DIR + '/' + filename
+      url_path = 'images/characters/' + filename
+
+      File.exist?(filepath) ? url_path : 'images/nobody.jpg'
+    end
+
     def exist?
       File.exist?(image_path)
     end
