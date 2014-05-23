@@ -5,11 +5,7 @@ class ImageFilter
 
   class << self
     def apply(image, name)
-      if exist?(name)
-        image = send(filter_method(name), image)
-      else
-        image
-      end
+      exist?(name) ? send(filter_method(name), image) : image
     end
 
     def exist?(name)
